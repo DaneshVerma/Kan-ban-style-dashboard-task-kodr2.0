@@ -3,7 +3,7 @@ import Dashboard from './components/Dashbord'
 
 const App = () => {
   return (
-    <div>
+    <div className="select-none">
       <Dashboard />
     </div>
   )

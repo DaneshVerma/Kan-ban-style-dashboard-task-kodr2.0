@@ -4,7 +4,6 @@ import { initialData } from "../data";
 import Column from "../components/Column";
 
 export default function Dashboard() {
-  // Load from localStorage or fallback
   const [data, setData] = useState(() => {
     const saved = localStorage.getItem("kanbanJobs");
     return saved ? JSON.parse(saved) : initialData;
@@ -19,7 +18,7 @@ export default function Dashboard() {
     status: "Applied",
   });
 
-  // Save to localStorage
+  // Save state changes to localStorage
   useEffect(() => {
     localStorage.setItem("kanbanJobs", JSON.stringify(data));
   }, [data]);
@@ -88,6 +87,10 @@ export default function Dashboard() {
     };
   }
 
+  const isEmptyBoard = Object.values(data.columns).every(
+    (col) => col.cards.length === 0
+  );
+
   return (
     <div className='p-4 sm:p-6'>
       {/* Header */}
@@ -98,19 +101,30 @@ export default function Dashboard() {
         <div className='flex flex-col sm:flex-row gap-2 w-full sm:w-auto'>
           <input
             type='text'
-            placeholder='Search jobs...'
+            placeholder='Search applications...'
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className='border border-gray-300 rounded px-3 py-2 text-sm flex-1'
           />
           <button
             onClick={() => setShowForm(true)}
-            className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm'
+            className='bg-blue-600 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-700 text-sm'
           >
             + Add Job
           </button>
         </div>
       </header>
+
+      {/* Empty State Message */}
+      {isEmptyBoard && (
+        <div className='text-center text-gray-500 py-8 w-full'>
+          <p className='mb-2'>Welcome! Your board is empty.</p>
+          <p>
+            Click <span className='font-semibold'>+ Add Job</span> to get
+            started.
+          </p>
+        </div>
+      )}
 
       {/* Kanban Board */}
       <DragDropContext onDragEnd={onDragEnd}>
@@ -124,6 +138,7 @@ export default function Dashboard() {
           ))}
         </div>
       </DragDropContext>
+
       {/* Add Job Modal */}
       {showForm && (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4'>
@@ -173,13 +188,13 @@ export default function Dashboard() {
                 <button
                   type='button'
                   onClick={() => setShowForm(false)}
-                  className='px-4 py-2 border rounded text-sm w-full sm:w-auto'
+                  className='px-4 cursor-pointer py-2 border rounded text-sm w-full sm:w-auto'
                 >
                   Cancel
                 </button>
                 <button
                   type='submit'
-                  className='px-4 py-2 bg-blue-600 text-white rounded text-sm w-full sm:w-auto'
+                  className='px-4 py-2 cursor-pointer bg-blue-600 text-white rounded text-sm w-full sm:w-auto'
                 >
                   Add Job
                 </button>
@@ -189,7 +204,7 @@ export default function Dashboard() {
         </div>
       )}
       <footer className='fixed bottom-0 backdrop-filter backdrop-blur-sm bg-white/50 p-4 text-center w-full'>
-        <p className="text-base text-gray-500">
+        <p className='text-base text-gray-500'>
           &copy; {new Date().getFullYear()} [<i>Danesh</i>]
         </p>
       </footer>
