@@ -1,6 +1,6 @@
 import React from "react";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
-import JobCard from "./JobCard";
+import Jobcard from "./JobCard";
 
 export default function Column({ column, cards }) {
   return (
@@ -21,7 +21,7 @@ export default function Column({ column, cards }) {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    <JobCard job={card} />
+                    <Jobcard job={card} />
                   </div>
                 )}
               </Draggable>

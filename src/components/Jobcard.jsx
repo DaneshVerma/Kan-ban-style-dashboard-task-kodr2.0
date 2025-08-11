@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function JobCard({ job }) {
+export default function Jobcard({ job }) {
   const statusColors = {
     Applied: "bg-blue-200 text-blue-800",
     Interviewing: "bg-orange-200 text-orange-800",
