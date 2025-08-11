@@ -1,83 +1,78 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { initialData } from "../data";
 import Column from "../components/Column";
 
 export default function Dashboard() {
-  const [data, setData] = useState(initialData);
+  // Load from localStorage or fallback
+  const [data, setData] = useState(() => {
+    const saved = localStorage.getItem("kanbanJobs");
+    return saved ? JSON.parse(saved) : initialData;
+  });
+
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
+  const [newJob, setNewJob] = useState({
     company: "",
     role: "",
-    dateApplied: new Date().toISOString().slice(0, 10),
+    dateApplied: "",
     status: "Applied",
   });
 
-  const onDragEnd = (result) => {
-    const { destination, source } = result;
+  // Save to localStorage
+  useEffect(() => {
+    localStorage.setItem("kanbanJobs", JSON.stringify(data));
+  }, [data]);
+
+  const onDragEnd = ({ destination, source }) => {
     if (!destination) return;
 
-    const startColumn = data.columns[source.droppableId];
-    const endColumn = data.columns[destination.droppableId];
+    const start = data.columns[source.droppableId];
+    const finish = data.columns[destination.droppableId];
 
-    if (startColumn === endColumn) {
-      const newCards = Array.from(startColumn.cards);
-      const [moved] = newCards.splice(source.index, 1);
-      newCards.splice(destination.index, 0, moved);
-
-      const newColumn = { ...startColumn, cards: newCards };
-      setData((prev) => ({
-        ...prev,
-        columns: { ...prev.columns, [newColumn.id]: newColumn },
-      }));
+    if (start === finish) {
+      const updated = Array.from(start.cards);
+      const [moved] = updated.splice(source.index, 1);
+      updated.splice(destination.index, 0, moved);
+      setData({
+        ...data,
+        columns: { ...data.columns, [start.id]: { ...start, cards: updated } },
+      });
     } else {
-      const startCards = Array.from(startColumn.cards);
+      const startCards = Array.from(start.cards);
       const [moved] = startCards.splice(source.index, 1);
-      moved.status = endColumn.title;
-
-      const endCards = Array.from(endColumn.cards);
-      endCards.splice(destination.index, 0, moved);
-
-      setData((prev) => ({
-        ...prev,
+      moved.status = finish.title;
+      const finishCards = Array.from(finish.cards);
+      finishCards.splice(destination.index, 0, moved);
+      setData({
+        ...data,
         columns: {
-          ...prev.columns,
-          [startColumn.id]: { ...startColumn, cards: startCards },
-          [endColumn.id]: { ...endColumn, cards: endCards },
+          ...data.columns,
+          [start.id]: { ...start, cards: startCards },
+          [finish.id]: { ...finish, cards: finishCards },
         },
-      }));
+      });
     }
   };
 
   const handleAddJob = (e) => {
     e.preventDefault();
-    const newJob = {
-      id: Date.now().toString(),
-      company: formData.company,
-      role: formData.role,
-      dateApplied: formData.dateApplied,
-      status: "Applied",
-    };
-
-    setData((prev) => ({
-      ...prev,
+    const id = Date.now().toString();
+    const colId = Object.keys(data.columns).find(
+      (key) =>
+        data.columns[key].title.toLowerCase() === newJob.status.toLowerCase()
+    );
+    setData({
+      ...data,
       columns: {
-        ...prev.columns,
-        applied: {
-          ...prev.columns.applied,
-          cards: [...prev.columns.applied.cards, newJob],
+        ...data.columns,
+        [colId]: {
+          ...data.columns[colId],
+          cards: [...data.columns[colId].cards, { id, ...newJob }],
         },
       },
-    }));
-
-    // Reset and close modal
-    setFormData({
-      company: "",
-      role: "",
-      dateApplied: new Date().toISOString().slice(0, 10),
-      status: "Applied",
     });
+    setNewJob({ company: "", role: "", dateApplied: "", status: "Applied" });
     setShowForm(false);
   };
 
@@ -94,21 +89,23 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-10">
+    <div className='p-4 sm:p-6'>
       {/* Header */}
-      <header className="flex justify-between items-center mb-4 ">
-        <h1 className="text-2xl font-bold">Job Application Tracker</h1>
-        <div className="flex gap-2">
+      <header className='flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6'>
+        <h1 className='text-xl sm:text-2xl font-bold'>
+          Job Application Tracker
+        </h1>
+        <div className='flex flex-col sm:flex-row gap-2 w-full sm:w-auto'>
           <input
-            type="text"
-            placeholder="Search jobs..."
+            type='text'
+            placeholder='Search jobs...'
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+            className='border border-gray-300 rounded px-3 py-2 text-sm flex-1'
           />
           <button
             onClick={() => setShowForm(true)}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+            className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm'
           >
             + Add Job
           </button>
@@ -117,7 +114,7 @@ export default function Dashboard() {
 
       {/* Kanban Board */}
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex w-full gap-4 overflow-x-auto pb-4">
+        <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
           {data.columnOrder.map((colId) => (
             <Column
               key={colId}
@@ -127,52 +124,62 @@ export default function Dashboard() {
           ))}
         </div>
       </DragDropContext>
-
       {/* Add Job Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-96">
-            <h2 className="text-xl font-bold mb-4">Add New Job</h2>
-            <form onSubmit={handleAddJob} className="space-y-4">
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4'>
+          <div className='bg-white p-6 rounded-lg shadow-lg w-full max-w-md'>
+            <h2 className='text-lg sm:text-xl font-bold mb-4'>Add New Job</h2>
+            <form onSubmit={handleAddJob} className='space-y-4'>
               <input
-                type="text"
-                placeholder="Company Name"
-                value={formData.company}
+                type='text'
+                value={newJob.company}
                 onChange={(e) =>
-                  setFormData({ ...formData, company: e.target.value })
+                  setNewJob({ ...newJob, company: e.target.value })
                 }
+                placeholder='Company Name'
+                className='w-full border p-2 rounded text-sm'
                 required
-                className="w-full border border-gray-300 rounded px-3 py-2"
               />
               <input
-                type="text"
-                placeholder="Role"
-                value={formData.role}
-                onChange={(e) =>
-                  setFormData({ ...formData, role: e.target.value })
-                }
+                type='text'
+                value={newJob.role}
+                onChange={(e) => setNewJob({ ...newJob, role: e.target.value })}
+                placeholder='Role'
+                className='w-full border p-2 rounded text-sm'
                 required
-                className="w-full border border-gray-300 rounded px-3 py-2"
               />
               <input
-                type="date"
-                value={formData.dateApplied}
+                type='date'
+                value={newJob.dateApplied}
                 onChange={(e) =>
-                  setFormData({ ...formData, dateApplied: e.target.value })
+                  setNewJob({ ...newJob, dateApplied: e.target.value })
                 }
-                className="w-full border border-gray-300 rounded px-3 py-2"
+                className='w-full border p-2 rounded text-sm'
+                required
               />
-              <div className="flex justify-end gap-2">
+              <select
+                value={newJob.status}
+                onChange={(e) =>
+                  setNewJob({ ...newJob, status: e.target.value })
+                }
+                className='w-full border p-2 rounded text-sm'
+              >
+                <option>Applied</option>
+                <option>Interviewing</option>
+                <option>Offer</option>
+                <option>Rejected</option>
+              </select>
+              <div className='flex flex-col sm:flex-row justify-end gap-2'>
                 <button
-                  type="button"
+                  type='button'
                   onClick={() => setShowForm(false)}
-                  className="px-4 py-2 border rounded"
+                  className='px-4 py-2 border rounded text-sm w-full sm:w-auto'
                 >
                   Cancel
                 </button>
                 <button
-                  type="submit"
-                  className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded"
+                  type='submit'
+                  className='px-4 py-2 bg-blue-600 text-white rounded text-sm w-full sm:w-auto'
                 >
                   Add Job
                 </button>
@@ -181,8 +188,10 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-      <footer>
-        <p className="text-center text-gray-500">&copy; {new Date().getFullYear()} [<i>Danesh</i>]</p>
+      <footer className='fixed bottom-0 backdrop-filter backdrop-blur-sm bg-white/50 p-4 text-center w-full'>
+        <p className="text-base text-gray-500">
+          &copy; {new Date().getFullYear()} [<i>Danesh</i>]
+        </p>
       </footer>
     </div>
   );
