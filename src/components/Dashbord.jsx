@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { initialData } from "../data";
 import Column from "../components/Column";
-import Header from "./Header";
 
 export default function Dashboard() {
   const [data, setData] = useState(() => {
