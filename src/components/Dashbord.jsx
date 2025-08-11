@@ -95,7 +95,26 @@ export default function Dashboard() {
   return (
     <div className='p-4 sm:p-6'>
       {/* Header */}
-      <Header />
+      <header className='flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-6'>
+        <h1 className='text-xl sm:text-2xl font-bold'>
+          Job Application Tracker
+        </h1>
+        <div className='flex flex-col sm:flex-row gap-2 w-full sm:w-auto'>
+          <input
+            type='text'
+            placeholder='Search applications...'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className='border border-gray-300 rounded px-3 py-2 text-sm flex-1'
+          />
+          <button
+            onClick={() => setShowForm(true)}
+            className='bg-blue-600 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-700 text-sm'
+          >
+            + Add Job
+          </button>
+        </div>
+      </header>{" "}
       {/* Empty State Message */}
       {isEmptyBoard && (
         <div className='text-center text-gray-500 py-8 w-full'>
@@ -106,7 +125,6 @@ export default function Dashboard() {
           </p>
         </div>
       )}
-
       {/* Drag and Drop Board */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
@@ -119,7 +137,6 @@ export default function Dashboard() {
           ))}
         </div>
       </DragDropContext>
-
       {/* Add Job Form */}
       {showForm && (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4'>
