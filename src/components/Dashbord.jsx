@@ -96,7 +96,7 @@ export default function Dashboard() {
   return (
     <div className="p-10">
       {/* Header */}
-      <header className="flex justify-between items-center mb-6">
+      <header className="flex justify-between items-center mb-4 ">
         <h1 className="text-2xl font-bold">Job Application Tracker</h1>
         <div className="flex gap-2">
           <input
@@ -117,7 +117,7 @@ export default function Dashboard() {
 
       {/* Kanban Board */}
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex gap-4 overflow-x-auto pb-4">
+        <div className="flex w-full gap-4 overflow-x-auto pb-4">
           {data.columnOrder.map((colId) => (
             <Column
               key={colId}
