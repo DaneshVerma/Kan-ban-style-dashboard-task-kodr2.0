@@ -1,6 +1,6 @@
 import React from "react";
 import { Droppable, Draggable } from "@hello-pangea/dnd";
-import Jobcard from "./JobCard";
+import Jobcard from "./Jobcard";
 
 export default function Column({ column, cards }) {
   return (
