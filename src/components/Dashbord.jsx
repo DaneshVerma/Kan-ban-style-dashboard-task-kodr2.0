@@ -138,7 +138,7 @@ export default function Dashboard() {
       </DragDropContext>
       {/* Add Job Form */}
       {showForm && (
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4'>
+        <div className='fixed inset-0 backdrop-blur-sm bg-opacity-50 flex justify-center items-center p-4'>
           <div className='bg-white p-6 rounded-lg shadow-lg w-full max-w-md'>
             <h2 className='text-lg sm:text-xl font-bold mb-4'>Add New Job</h2>
             <form onSubmit={handleAddJob} className='space-y-4'>
