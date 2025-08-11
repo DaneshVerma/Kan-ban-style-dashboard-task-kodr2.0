@@ -13,9 +13,9 @@ export const initialData = {
         },
         {
           id: "2",
-          company: "Microsoft",
-          role: "Backend Engineer",
-          dateApplied: "2025-08-03",
+          company: "Spotify",
+          role: "React Engineer",
+          dateApplied: "2025-08-05",
           status: "Applied",
         },
       ],
@@ -24,11 +24,12 @@ export const initialData = {
       id: "interviewing",
       title: "Interviewing",
       cards: [
+        
         {
-          id: "3",
-          company: "Amazon",
-          role: "Full Stack Developer",
-          dateApplied: "2025-07-28",
+          id: "9",
+          company: "Meta",
+          role: "Product Manager",
+          dateApplied: "2025-06-10",
           status: "Interviewing",
         },
       ],
@@ -36,12 +37,36 @@ export const initialData = {
     offer: {
       id: "offer",
       title: "Offer",
-      cards: [],
+      cards: [
+        {
+          id: "8",
+          company: "Airbnb",
+          role: "Frontend Developer",
+          dateApplied: "2025-06-15",
+          status: "Offer",
+        },
+
+        {
+          id: "10",
+          company: "Slack",
+          role: "React Developer",
+          dateApplied: "2025-05-28",
+          status: "Offer",
+        },
+      ],
     },
     rejected: {
       id: "rejected",
       title: "Rejected",
-      cards: [],
+      cards: [
+        {
+          id: "7",
+          company: "Netflix",
+          role: "UI/UX Designer",
+          dateApplied: "2025-06-20",
+          status: "Rejected",
+        },
+      ],
     },
   },
   columnOrder: ["applied", "interviewing", "offer", "rejected"],

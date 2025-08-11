@@ -94,7 +94,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-10">
       {/* Header */}
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Job Application Tracker</h1>
@@ -181,6 +181,9 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+      <footer>
+        <p className="text-center text-gray-500">&copy; {new Date().getFullYear()} [<i>Danesh</i>]</p>
+      </footer>
     </div>
   );
 }
