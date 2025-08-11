@@ -125,17 +125,18 @@ export default function Dashboard() {
         </div>
       )}
       {/* Drag and Drop Board */}
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
-          {data.columnOrder.map((colId) => (
-            <Column
-              key={colId}
-              column={filteredColumns[colId]}
-              cards={filteredColumns[colId].cards}
-            />
-          ))}
-        </div>
-      </DragDropContext>
+     <DragDropContext onDragEnd={onDragEnd}>
+  <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    {data.columnOrder.map((colId) => (
+      <Column
+        key={colId}
+        column={filteredColumns[colId]}
+        cards={filteredColumns[colId].cards}
+      />
+    ))}
+  </div>
+</DragDropContext>
+
       {/* Add Job Form */}
       {showForm && (
         <div className='fixed inset-0 backdrop-blur-sm bg-opacity-50 flex justify-center items-center p-4'>
